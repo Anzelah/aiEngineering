@@ -34,17 +34,10 @@ def write_to_csv():
     if data is None:
         return None
     
-    if isinstance(data, dict):
-        with open("output.csv", "w") as csv_file:
-            fieldnames = [ "Name", "Age", "Occupation"]
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(data)
-    elif (isinstance(data, list)):
-        with open("output.csv", "w", newline='') as csv_file:
-            fieldnames = [ "Name", "Age", "Occupation"]
-            writer = csv.writer(csv_file, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(data)
-    else:
-        return 
+    with open("output.csv", "w", newline='') as csv_file:
+        fieldnames = ["Name", "Age", "Occupation"]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader
+        for row in data:
+            writer.writerow(row)
+    
