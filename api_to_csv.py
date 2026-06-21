@@ -11,33 +11,30 @@ def pull_data():
 
 
     try:
-        url = "http://worldtimeapi.org/api/timezone/"
-        res = requests.get(url, timeout=5)
+        res = requests.get("url", timeout=5)
         res.raise_for_status()
+        return res.json()
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occured: {http_err}")
-        return
+        return None
     except requests.exceptions.Timeout as time_err:
         print(f"The request timed out: {time_err}")
-        return
+        return None
     except requests.exceptions.TooManyRedirects as redir_err:
         print(f"Too many redirects: {redir_err}")
-        return
-    else:
-        # parse the JSON response into a dictionary
-        data = res.json()
-        return data
+        return None
+    
 
 def write_to_csv():
     """"Write API data into a csv"""
     data = pull_data()
-    if data is None:
+    if not data:
         return None
     
     with open("output.csv", "w", newline='') as csv_file:
         fieldnames = ["Name", "Age", "Occupation"]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader
+        writer.writeheader()
         for row in data:
             writer.writerow(row)
     
