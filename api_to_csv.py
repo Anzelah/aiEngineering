@@ -36,7 +36,10 @@ def write_to_csv():
         print(f"Unexpected data format: ", type(data))
         return
     
-    with open("output.csv", "w", newline='') as csv_file:
-        writer = csv.writer(csv_file, delimiter=' ')
-        writer.writerows(data)
+    with open("output.csv", "w", newline="", encoding="utf-") as csv_file:
+        fieldnames = data[0].keys()
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in data:
+            writer.writerow(data)
     
