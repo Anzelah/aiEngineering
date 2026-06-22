@@ -27,19 +27,20 @@ def pull_data():
     
 
 def write_to_csv():
-    """"Write API data into a csv"""
+    """Write API data into a csv"""
     data = pull_data()
     if not data:
+        print("No data returned from API")
         return None
     
     if not isinstance(data, list):
         print(f"Unexpected data format: ", type(data))
         return
     
-    with open("output.csv", "w", newline="", encoding="utf-") as csv_file:
+    with open("output.csv", "w", newline="", encoding="utf-8") as csv_file:
         fieldnames = data[0].keys()
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         for row in data:
-            writer.writerow(data)
+            writer.writerow(row)
     
