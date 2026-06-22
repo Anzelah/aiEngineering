@@ -12,7 +12,17 @@ def load_secrets():
         print("The .env file doesn't exist")
         return
     
-    load_dotenv()
-    api_key = os.getenv("API_KEY")
-
+    try:
+        load_dotenv()
+        env_var = os.environ
+        print(f"The environmental variables are: {env_var}")
+    except FileNotFoundError as file_err:
+        print(f"The file requested doesn't exist: {file_err}")
+        return None
+    except KeyError as key_err:
+        print(f"Environmental variable doesn't exist: {key_err}")
+        return None
+    except OSError as e:
+        print(f"A system-level error occurred: {e}")
+        return None
     
