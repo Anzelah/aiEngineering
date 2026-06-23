@@ -44,3 +44,5 @@ def write_to_csv():
         for row in data:
             writer.writerow(row)
     
+if __name__ == "__main__":
+    write_to_csv()
