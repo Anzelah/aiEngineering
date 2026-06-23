@@ -3,7 +3,7 @@ This function script loads secrets from an
 .env file and handles error cleanly
 """
 
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 import os
 
 def load_secrets():
@@ -13,20 +13,18 @@ def load_secrets():
         return None
     
     try:
-        loaded = load_dotenv()
-        if not loaded:
+        config = dotenv_values(".env")
+        if not config:
             print(f"Failed to load env variables. It may be empty")
             return None
-            
-        env_var = os.environ
-        print(f"The environmental variables are: {env_var}")
-    except FileNotFoundError as file_err:
-        print(f"The file requested doesn't exist: {file_err}")
+        
+        for key, value in config.items():
+            print(f"The environmental variables are - {key}: {value}")
+        return config
+
+    except OSError as os_err:
+        print(f"A system-level error occurred: {os_err}")
         return None
-    except KeyError as key_err:
-        print(f"Environmental variable doesn't exist: {key_err}")
+    except Exception as e:
+        print(f"An unexpected error occured: {e}")
         return None
-    except OSError as e:
-        print(f"A system-level error occurred: {e}")
-        return None
-    
