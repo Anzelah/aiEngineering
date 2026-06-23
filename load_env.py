@@ -10,10 +10,14 @@ def load_secrets():
     """A file that loads .env file"""
     if not os.path.exists(".env"):
         print("The .env file doesn't exist")
-        return
+        return None
     
     try:
-        load_dotenv()
+        loaded = load_dotenv()
+        if not loaded:
+            print(f"Failed to load env variables. It may be empty")
+            return None
+            
         env_var = os.environ
         print(f"The environmental variables are: {env_var}")
     except FileNotFoundError as file_err:
