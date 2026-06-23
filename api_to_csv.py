@@ -39,7 +39,7 @@ def write_to_csv():
     
     with open("output.csv", "w", newline="", encoding="utf-8") as csv_file:
         fieldnames = data[0].keys()
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer = csv.DictWriter(csv_file, delimiter=' ', fieldnames=fieldnames)
         writer.writeheader()
         for row in data:
             writer.writerow(row)
