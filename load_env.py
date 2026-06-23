@@ -6,6 +6,7 @@ This function script loads secrets from an
 from dotenv import dotenv_values
 import os
 
+
 def load_secrets():
     """A file that loads .env file"""
     if not os.path.exists(".env"):
@@ -15,11 +16,11 @@ def load_secrets():
     try:
         config = dotenv_values(".env")
         if not config:
-            print(f"Failed to load env variables. It may be empty")
+            print(f"Failed to load env variables. The .env file may be empty or invalid")
             return None
         
         for key, value in config.items():
-            print(f"The environmental variables are - {key}: {value}")
+            print(f"{key}: {value}")
         return config
 
     except OSError as os_err:
@@ -28,3 +29,7 @@ def load_secrets():
     except Exception as e:
         print(f"An unexpected error occured: {e}")
         return None
+    
+
+if __name__ == "__main__":
+    load_secrets()
