@@ -20,7 +20,7 @@ def load_secrets():
             return None
         
         for key, value in config.items():
-            print(f"{key}: {value}")
+            print(f"These are the environmental variables {key}: {value}")
         return config
 
     except OSError as os_err:
