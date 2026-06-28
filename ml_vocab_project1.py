@@ -2,5 +2,22 @@
 Train a tiny classifier using scikit learn
 """
 
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+
 def train_classifier():
-    pass
+    """Train the iris plants toy dataset and train it to classify items"""
+    data = load_iris() 
+
+    # extract the x(features) and y(label)
+    X, y = data['data'], data['target'] 
+
+    # Split the data into 66 training and 33 test 
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42) 
+
+    # Train the model
+    
+    
+
+if __name__ == "__main__":
+    train_classifier()
