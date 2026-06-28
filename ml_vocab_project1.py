@@ -4,6 +4,7 @@ Train a tiny classifier using scikit learn
 
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
 
 def train_classifier():
     """Train the iris plants toy dataset and train it to classify items"""
@@ -16,7 +17,7 @@ def train_classifier():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42) 
 
     # Train the model
-    
+
     
 
 if __name__ == "__main__":
