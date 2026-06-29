@@ -27,7 +27,7 @@ def generate_embeddings():
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
     
     # Generate embeddings from our input data
-    embeddings = model.encode_query(data, prompt_name="query", show_progress_bar=True)
+    embeddings = model.encode(data, show_progress_bar=True)
 
     # Compute similarities using cosin similarity
     similarities = util.cos_sim(embeddings, embeddings)
