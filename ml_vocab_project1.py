@@ -5,7 +5,7 @@ Train a tiny classifier using scikit learn
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import r2_score
+from sklearn.metrics import accuracy_score
 
 def train_classifier():
     """Train the iris plants toy dataset and train it to classify items"""
@@ -27,7 +27,7 @@ def train_classifier():
     model_predictions = model.predict(X_test)
 
     # Evaluate how well the model fares(1 perfect, 0 average, - worst)
-    score = r2_score(y_true=y_test, y_pred=model_predictions)
+    score = accuracy_score(y_true=y_test, y_pred=model_predictions, normalize=True)
     print(score)
 
 
