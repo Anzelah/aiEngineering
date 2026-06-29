@@ -3,7 +3,7 @@ Generate embeddings and compute similarity
 """
 
 import pandas as pd
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, util
 
 def generate_embeddings():
     """Use pretained model SentenceTransformers to generate vectors"""
@@ -24,10 +24,10 @@ def generate_embeddings():
     
     # Generate embeddings from our input data
     embeddings = model.encode_query(df, prompt_name="query", show_progress_bar=True)
-    print(embeddings)
+    print(f"A list of numbers representing the sentence meaning: {embeddings}")
 
-    # Compute similarities
-    similarities = model.similarity(embeddings, embeddings)
+    # Compute similarities using cosin similarity
+    similarities = util.cos_sim(embeddings, embeddings)
     print(similarities)
 
 
