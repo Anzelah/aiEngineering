@@ -35,7 +35,7 @@ def generate_embeddings():
     # Compute similarity scores finding sentences in corpus similar to our query
     similarity_scores = util.cos_sim(corpus_embeddings, query_embedding)
 
-    # Extract the top 5 similar sentences along the row. dim=1 refers to columns
+    # Extract the top 5 similar sentences in our similarity_score row
     scores, indices = similarity_scores.topk(k=5, dim=0)
     for score, index in zip(scores, indices):
         print(f"The top five similar queries are: {corpus[index.item()]} -> score: {score:.4f}") 
