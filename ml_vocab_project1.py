@@ -16,7 +16,9 @@ def train_classifier():
     # Split the data into 66 training and 33 test 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42) 
 
-    # Train the model
+    # Train the model (from scratch using our data)
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
 
     
 
