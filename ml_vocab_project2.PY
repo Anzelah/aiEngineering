@@ -2,8 +2,8 @@
 Generate embeddings and compute similarity
 """
 
-from sentence_transformers import SentenceTransformer
 import pandas as pd
+from sentence_transformers import SentenceTransformer
 
 def generate_embeddings():
     """Use pretained model SentenceTransformers to generate vectors"""
@@ -17,4 +17,20 @@ def generate_embeddings():
         print(f"The file is completely empty")
     except Exception as e:
         print(f"An unexpected error occured: {e}")
+    print(df)
+
+    # Load a pretained Sentence Transformer model
+    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+    
+    # Generate embeddings from our input data
+    embeddings = model.encode_query(df, prompt_name="query", show_progress_bar=True)
+    print(embeddings)
+
+    # Compute similarities
+    similarities = model.similarity(embeddings, embeddings)
+    print(similarities)
+
+
+if __name__ == "__main__":
+    generate_embeddings()
     
