@@ -12,12 +12,16 @@ def generate_embeddings():
         df = pd.read_csv('Mental_Health_FAQ.csv')
         data = df['Questions'].tolist()
         print(f"Success: The file was loaded succesfully!")
+        return None
     except FileNotFoundError:
         print(f"Error: The file doesnt exist")
+        return None
     except pd.errors.EmptyDataError:
         print(f"The file is completely empty")
+        return None
     except Exception as e:
         print(f"An unexpected error occured: {e}")
+        return None
     
     # Load a pretained Sentence Transformer model
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
