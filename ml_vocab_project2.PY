@@ -12,7 +12,6 @@ def generate_embeddings():
         df = pd.read_csv('Mental_Health_FAQ.csv')
         data = df['Questions'].tolist()
         print(f"Success: The file was loaded succesfully!")
-        return None
     except FileNotFoundError:
         print(f"Error: The file doesnt exist")
         return None
@@ -27,11 +26,14 @@ def generate_embeddings():
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
     
     # Generate embeddings from our input data
-    embeddings = model.encode(data, show_progress_bar=True)
+    data_embeddings = model.encode(data, show_progress_bar=True)
 
+    query = ['How do i reduce anxiety?']
+    query_embeddings = model.encode(query)
     # Compute similarities using cosin similarity
-    similarities = util.cos_sim(embeddings, embeddings)
-    print(similarities)   
+    similarity_scores = util.cos_sim(data_embeddings, query_embeddings)
+    for i in similarity_scores:
+        print(i)   
 
 
 if __name__ == "__main__":
