@@ -10,7 +10,7 @@ def generate_embeddings():
     # load data 
     try:
         df = pd.read_csv('Mental_Health_FAQ.csv')
-        data = df['Questions'].tolist()
+        corpus = df['Questions'].tolist()
         print(f"Success: The file was loaded succesfully!")
     except FileNotFoundError:
         print(f"Error: The file doesnt exist")
@@ -26,14 +26,19 @@ def generate_embeddings():
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
     
     # Generate embeddings from our input data
-    data_embeddings = model.encode(data, show_progress_bar=True)
+    corpus_embeddings = model.encode(corpus, show_progress_bar=True)
 
+    # Add a query(real_world scenario) and create embeddings for it 
     query = ['How do i reduce anxiety?']
-    query_embeddings = model.encode(query)
-    # Compute similarities using cosin similarity
-    similarity_scores = util.cos_sim(data_embeddings, query_embeddings)
-    for i in similarity_scores:
-        print(i)   
+    query_embedding = model.encode(query)
+
+    # Compute similarity scores finding sentences in corpus similar to our query
+    similarity_scores = util.cos_sim(corpus_embeddings, query_embedding)
+
+    # Extract the top 5 similar sentences along the row. dim=1 refers to columns
+    scores, indices = similarity_scores.topk(k=5, dim=0)
+    for score, index in zip(scores, indices):
+        print(f"The top five similar queries are: {corpus[index.item()]} -> score: {score:.4f}") 
 
 
 if __name__ == "__main__":
