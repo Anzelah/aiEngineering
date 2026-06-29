@@ -18,7 +18,7 @@ def train_classifier():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42) 
 
     # Train the model (from scratch using our data)
-    model = LogisticRegression()
+    model = LogisticRegression(max_iter=300)
 
     # Give the model dataset with labeled examples to learn patterns
     model.fit(X_train, y_train)
@@ -28,10 +28,15 @@ def train_classifier():
 
     # Evaluate how well the model fares(1 perfect, 0 average, - worst)
     score = accuracy_score(y_true=y_test, y_pred=model_predictions, normalize=True)
-    print(score)
+    print(f"The accuracy score for this model is: {score}")
 
+    return model, X_test, y_test
 
-    
 
 if __name__ == "__main__":
-    train_classifier()
+    model, X_test, y_test = train_classifier()
+    
+    # Test on real test data
+    prediction = model.predict(X_test[10].reshape(1, -1))
+    print("Actual label:", y_test[10])
+    print("Predicted label:", prediction[0])
