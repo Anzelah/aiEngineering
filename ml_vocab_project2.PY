@@ -4,6 +4,7 @@ Generate embeddings and compute similarity
 
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
+import numpy as np
 
 def generate_embeddings():
     """Use pretained model SentenceTransformers to generate vectors"""
@@ -27,13 +28,15 @@ def generate_embeddings():
     
     # Generate embeddings from our input data
     corpus_embeddings = model.encode(corpus, show_progress_bar=True)
+    np.save("embeddings.npy", corpus_embeddings)
 
     # Add a query(real_world scenario) and create embeddings for it 
     query = ['How do i reduce anxiety?']
     query_embedding = model.encode(query)
 
     # Compute similarity scores finding sentences in corpus similar to our query
-    similarity_scores = util.cos_sim(corpus_embeddings, query_embedding)
+    loaded_corpus_embeddings = np.load("embeddings.npy")
+    similarity_scores = util.cos_sim(loaded_corpus_embeddings, query_embedding)
 
     # Extract the top 5 similar sentences in our similarity_score row
     scores, indices = similarity_scores.topk(k=5, dim=0)
