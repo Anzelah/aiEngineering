@@ -30,17 +30,17 @@ def generate_embeddings():
     # Generate embeddings from our input data if they dont exist
     file_path = "embeddings.npy"
     if os.path.exists(file_path):
-        loaded_embeddings = np.load(file_path)
+        corpus_embeddings = np.load(file_path)
     else:
         corpus_embeddings = model.encode(corpus, show_progress_bar=True)
-        np.save("embeddings.npy", corpus_embeddings)
+        np.save(file_path, corpus_embeddings)
 
     # Add a query(real_world scenario) and create embeddings for it 
     query = ['How do i reduce anxiety?']
     query_embedding = model.encode(query)
 
     # Compute similarity scores finding sentences in corpus similar to our query
-    similarity_scores = util.cos_sim(loaded_embeddings, query_embedding)
+    similarity_scores = util.cos_sim(corpus_embeddings, query_embedding)
 
     # Extract the top 5 similar sentences in our similarity_score row
     scores, indices = similarity_scores.topk(k=5, dim=0)
