@@ -41,7 +41,10 @@ def generate_embeddings():
     except FileNotFoundError:
         print(f"The specified numpy file cannot be found")
         return None 
-    
+    except Exception as e:
+        print(f"An unexpected error occured: {e}")
+        return None
+        
     # Compute similarity scores finding sentences in corpus similar to our query
     similarity_scores = util.cos_sim(loaded_corpus_embeddings, query_embedding)
 
