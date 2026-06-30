@@ -13,6 +13,7 @@ def generate_embeddings():
     try:
         df = pd.read_csv('Mental_Health_FAQ.csv')
         corpus = df['Questions'].tolist()
+        answers = df['Answers'].tolist()
         print(f"Success: The file was loaded succesfully!")
     except FileNotFoundError:
         print(f"Error: The file doesnt exist")
@@ -45,7 +46,7 @@ def generate_embeddings():
     # Extract the top 5 similar sentences in our similarity_score row
     scores, indices = similarity_scores.topk(k=5, dim=0)
     for score, index in zip(scores, indices):
-        print(f"The top five similar queries are: {corpus[index.item()]} -> score: {score:.4f}") 
+        print(f"The top five similar queries are: {answers[index.item()]} -> score: {score:.4f}") 
 
 
 if __name__ == "__main__":
