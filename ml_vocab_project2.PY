@@ -34,8 +34,15 @@ def generate_embeddings():
     query = ['How do i reduce anxiety?']
     query_embedding = model.encode(query)
 
+    # Load our corpus embeddings for use next step
+    try:
+        loaded_corpus_embeddings = np.load("embeddings.npy")
+        print(f"File containing embeddings succesfully loaded")
+    except FileNotFoundError:
+        print(f"The specified numpy file cannot be found")
+        return None 
+    
     # Compute similarity scores finding sentences in corpus similar to our query
-    loaded_corpus_embeddings = np.load("embeddings.npy")
     similarity_scores = util.cos_sim(loaded_corpus_embeddings, query_embedding)
 
     # Extract the top 5 similar sentences in our similarity_score row
