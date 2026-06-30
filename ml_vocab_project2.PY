@@ -5,6 +5,7 @@ Generate embeddings and compute similarity
 import pandas as pd
 from sentence_transformers import SentenceTransformer, util
 import numpy as np
+import os
 
 def generate_embeddings():
     """Use pretained model SentenceTransformers to generate vectors"""
@@ -26,27 +27,20 @@ def generate_embeddings():
     # Load a pretained Sentence Transformer model
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
     
-    # Generate embeddings from our input data
-    corpus_embeddings = model.encode(corpus, show_progress_bar=True)
-    np.save("embeddings.npy", corpus_embeddings)
+    # Generate embeddings from our input data if they dont exist
+    file_path = "embeddings.npy"
+    if os.path.exists(file_path):
+        loaded_embeddings = np.load(file_path)
+    else:
+        corpus_embeddings = model.encode(corpus, show_progress_bar=True)
+        np.save("embeddings.npy", corpus_embeddings)
 
     # Add a query(real_world scenario) and create embeddings for it 
     query = ['How do i reduce anxiety?']
     query_embedding = model.encode(query)
 
-    # Load our corpus embeddings for use next step
-    try:
-        loaded_corpus_embeddings = np.load("embeddings.npy")
-        print(f"File containing embeddings succesfully loaded")
-    except FileNotFoundError:
-        print(f"The specified numpy file cannot be found")
-        return None 
-    except Exception as e:
-        print(f"An unexpected error occured: {e}")
-        return None
-        
     # Compute similarity scores finding sentences in corpus similar to our query
-    similarity_scores = util.cos_sim(loaded_corpus_embeddings, query_embedding)
+    similarity_scores = util.cos_sim(loaded_embeddings, query_embedding)
 
     # Extract the top 5 similar sentences in our similarity_score row
     scores, indices = similarity_scores.topk(k=5, dim=0)
