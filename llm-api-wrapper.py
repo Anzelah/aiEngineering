@@ -7,7 +7,7 @@ import argparse
 from dotenv import load_dotenv
 import os
 import sys
-from huggingface_hub import InferenceClient
+from huggingface_hub import InferenceClient, InferenceTimeoutError
 
 
 def parse_input():
@@ -58,12 +58,20 @@ def call_api():
         }
     }
 
-    completion = client.chat.completions.create(
-        model='meta-llama/Meta-Llama-3-8B-Instruct',
-        messages=messages,
-        max_tokens=150,
-        response_format=response_format
-    )
+    try:
+        completion = client.chat.completions.create(
+            model='meta-llama/Meta-Llama-3-8B-Instruct',
+            messages=messages,
+            max_tokens=150,
+            response_format=response_format
+        )
+    except InferenceTimeoutError as e:
+        print(f"The model is either unavailable or the request timed out: {e}")
+        # retry logic
+        return None
+    except hfhubhttperror as e:
+        print(f"Request failed with an HTTP error status code other than HTTP 503: {e}")
+        return None
 
 
 
