@@ -7,9 +7,10 @@ import argparse
 from dotenv import load_dotenv
 import os
 import sys
+from huggingface_hub import InferenceClient
 
 
-def user_input():
+def parse_input():
     """Parse user input from CLI using Argparse"""
     parser = argparse.ArgumentParser(description='Take user input text and passes in onto another function', suggest_on_error=True)
     parser.add_argument('user_input', type=str, help='The string to send to api')
@@ -32,6 +33,19 @@ def call_api():
     api_key = os.getenv('HF_API_KEY')
     if not api_key:
         sys.exit("Error: Missing API key")
+
+    # Get user input
+    user_input = parse_input()
+
+    # Call LLM api. To use chat completions
+    client = InferenceClient(api_key=api_key)
+
+    completion = client.text_generation(
+        prompt=user_input,
+        model='meta-llama/Meta-Llama-3-8B-Instruct',
+    )
+
+
 
 
 
