@@ -39,10 +39,30 @@ def call_api():
 
     # Call LLM api. To use chat completions
     client = InferenceClient(api_key=api_key)
+    messages = [
+        {
+            'role': 'system',
+            'content': ('You are an expert assistant')
+        }, 
+        { 'role': 'user', 'content': user_input }
+    ]
 
-    completion = client.text_generation(
-        prompt=user_input,
+    response_format = {
+        'type': 'json',
+        'value': {
+            'properties': {
+                'summary': { 'type': 'string', 'description': 'The summary response from the llm api' },
+                'sentiment': { 'type': 'string', 'description': 'What is the tone of the user input?' }
+            },
+            'required': [ 'summary', 'sentiment' ]
+        }
+    }
+
+    completion = client.chat.completions.create(
         model='meta-llama/Meta-Llama-3-8B-Instruct',
+        messages=messages,
+        max_tokens=150,
+        response_format=response_format
     )
 
 
