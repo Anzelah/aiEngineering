@@ -9,18 +9,18 @@ import argparse
 def user_input():
     """Parse user input from CLI using Argparse"""
     parser = argparse.ArgumentParser(description='Take user input text and passes in onto another function', suggest_on_error=True)
-    parser.add_argument('user_question', type=str, help='The string to send to api')
+    parser.add_argument('user_input', type=str, help='The string to send to api')
     parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose output')
     args = parser.parse_args()
 
     # Check for empty strings
-    if not args.user_question.strip():
+    if not args.user_input.strip():
         parser.error(f"Input cannot be empty")
     
     if args.verbose:
         print(f"User input received succesfully")
 
-    return args.user_question
+    return args.user_input
 
 
 def call_api():
