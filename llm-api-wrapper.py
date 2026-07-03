@@ -4,6 +4,9 @@ This wrapper is a support simple text analyzer. We'll do the support ticket anal
 """
 
 import argparse
+from dotenv import load_dotenv
+import os
+import sys
 
 
 def user_input():
@@ -24,7 +27,12 @@ def user_input():
 
 
 def call_api():
-    pass
+    """Call an llm wrapper with our user_input as the input"""
+    load_dotenv()
+    api_key = os.getenv('HF_API_KEY')
+    if not api_key:
+        sys.exit("Error: Missing API key")
+
 
 
 def json_output():
