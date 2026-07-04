@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import os
 import sys
 from huggingface_hub import InferenceClient, InferenceTimeoutError
+from huggingface_hub.utils import HfHubHTTPError
 
 
 def parse_input():
@@ -69,9 +70,20 @@ def call_api():
         print(f"The model is either unavailable or the request timed out: {e}")
         # retry logic
         return None
-    except hfhubhttperror as e:
-        print(f"Request failed with an HTTP error status code other than HTTP 503: {e}")
-        return None
+    except HfHubHTTPError as e:
+        status_code = e.response.status_code
+        if status_code == 401:
+            print("Unauthorized access. Check your api token permissions")
+        elif status_code == 403:
+            print("Forbidden. You are not allowed to access this resource")
+        elif status_code == 404:
+            print("Requested resource doesn't exist. It might've been moved elsewhere or a mispelled link")
+        elif status_code == 429:
+            print("Too many requests. Try again after a while")
+        else:
+            print(f"HTTP error {status_code} occured: {e.server_message}")
+    except Exception as e:
+        print(f"An unexpected error occured: {e}")
 
 
 
