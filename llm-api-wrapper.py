@@ -70,8 +70,15 @@ def call_api():
         print(f"The model is either unavailable or the request timed out: {e}")
         # retry logic
         return None
+        
     except HfHubHTTPError as e:
-        status_code = e.response.status_code
+        # Check if response exists first to avoid failure later
+        if e.response:
+            status_code = e.response.status_code
+        else:
+            status_code = None
+
+        # Print error according to status codes
         if status_code == 401:
             print("Unauthorized access. Check your api token permissions")
         elif status_code == 403:
@@ -80,8 +87,11 @@ def call_api():
             print("Requested resource doesn't exist. It might've been moved elsewhere or a mispelled link")
         elif status_code == 429:
             print("Too many requests. Try again after a while")
+        elif status_code is None:
+            print(f"HTTP error occurred but no response was returned: {e}")
         else:
-            print(f"HTTP error {status_code} occured: {e.server_message}")
+            print(f"HTTP error {status_code} occured: {e}")
+
     except Exception as e:
         print(f"An unexpected error occured: {e}")
 
