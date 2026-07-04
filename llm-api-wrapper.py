@@ -68,9 +68,7 @@ def call_api():
         )
     except InferenceTimeoutError as e:
         print(f"The model is either unavailable or the request timed out: {e}")
-        # retry logic
-        return None
-        
+
     except HfHubHTTPError as e:
         # Check if response exists first to avoid failure later
         if e.response:
@@ -85,8 +83,16 @@ def call_api():
             print("Forbidden. You are not allowed to access this resource")
         elif status_code == 404:
             print("Requested resource doesn't exist. It might've been moved elsewhere or a mispelled link")
+
         elif status_code == 429:
-            print("Too many requests. Try again after a while")
+            # Retry logic when rate limit reached
+            retry_after = e.response.headers.get('RateLimit')
+            if retry_after:
+                wait_time = int(retry_after) / 60
+                print(f"Too many requests. Try again after {wait_time} minutes")
+            else:
+                print("Too many requests. Try again after a while")
+
         elif status_code is None:
             print(f"HTTP error occurred but no response was returned: {e}")
         else:
