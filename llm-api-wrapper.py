@@ -31,6 +31,28 @@ def valid_json(myjson):
         print("Error:Response is not a valid JSON")
         return None
 
+def validate_schema(data):
+    """Ensure required keys(summary and keypoints) exist"""
+    if not isinstance(data, dict):
+        return None
+    
+    summary = data.get('summary')
+    key_points = data.get('key_points') # Retrieves key if it exists and None if it doesnt
+    
+    if summary is None or key_points is None:
+        return None
+    
+    return data
+
+def format_output(data):
+    """Format final response to send to user"""
+
+    return f"""
+    The answer to your question is: \n
+    Summary: {data['summary']} \n
+    Key Points: {data['key_points']}"""
+
+
 def parse_input():
     """Parse user input from CLI using Argparse"""
     parser = argparse.ArgumentParser(description='Take user input text and passes in onto another function', suggest_on_error=True)
@@ -63,7 +85,7 @@ def call_api():
         {
             'role': 'system',
             'content': (
-                'You are an expert research assistant. Answer the questions and return structure JSON output with key points and summary')
+                'You are an expert research assistant. return structured JSON with summary and key_points')
         }, 
         { 'role': 'user', 'content': user_input }
     ]
@@ -72,7 +94,7 @@ def call_api():
         'type': 'json',
         'value': {
             'properties': {
-                'summary': { 'type': 'string', 'description': 'The summary response from the llm api' },
+                'summary': { 'type': 'string', 'description': 'Summary response from the llm api' },
                 'key_points': { 'type': 'string', 'description': 'Key points in numbered format' }
             },
             'required': [ 'summary', 'key_points' ]
@@ -86,18 +108,20 @@ def call_api():
             max_tokens=150,
             response_format=response_format
         )
-        response = completion.choices[0].message
-        parsed_res = valid_json(response.content) # Should return a structured dict {summary: ..., key_Points: ....}
-    
-        if parsed_res:
-            summary = parsed_res.get('summary')
-            key_points = parsed_res.get('key_points') # Retrieves key if it exists and None if it doesnt
+        response_content = completion.choices[0].message.content
 
-            if summary is None or key_points is None:
-                return None
-            return f"The answer to your question is: \nSummary: {summary} \nKey Points: {key_points}"
-        
-        return None
+        # Validate it's json and parse it
+        parsed = valid_json(response_content) # Should return a structured dict {summary: ..., key_Points: ....}
+        if not parsed:
+            return None
+    
+        # Validate it has content
+        validated = validate_schema(parsed)
+
+        #Format output
+        final_res = format_output(validated)
+        return final_res
+    
     except InferenceTimeoutError as e:
         print(f"The model is either unavailable or the request timed out: {e}")
 
