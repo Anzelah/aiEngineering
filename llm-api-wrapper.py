@@ -25,6 +25,7 @@ logging.basicConfig(
 )
 
 def valid_json(myjson):
+    """Validate output is json object"""
     try:
         return json.loads(myjson)
     except json.JSONDecodeError:
@@ -55,9 +56,14 @@ def format_output(data):
 
 def parse_input():
     """Parse user input from CLI using Argparse"""
-    parser = argparse.ArgumentParser(description='Take user input text and passes in onto another function', suggest_on_error=True)
-    parser.add_argument('user_input', type=str, help='The string to send to api')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose output')
+    parser = argparse.ArgumentParser(
+        description='Send user input to LLM', 
+        suggest_on_error=True
+    )
+
+    parser.add_argument('user_input', type=str, help='Input string')
+    parser.add_argument('-v', '--verbose', action='store_true')
+
     args = parser.parse_args()
 
     # Check for empty strings
@@ -70,17 +76,15 @@ def parse_input():
     return args.user_input
 
 
-def call_api():
+def call_api(user_input):
     """Call an llm wrapper with our user_input as the input"""
     api_key = os.getenv('HF_API_KEY')
     if not api_key:
         sys.exit("Error: Missing API key")
 
-    # Get user input
-    user_input = parse_input()
-
     # Call LLM api. To use chat completions
     client = InferenceClient(api_key=api_key)
+
     messages = [
         {
             'role': 'system',
@@ -151,3 +155,18 @@ def call_api():
     except Exception as e:
         print(f"An unexpected error occured: {e}")
 
+
+def main():
+    """Main function"""
+    # Get user input
+    user_input = parse_input()
+    result = call_api(user_input)
+
+    if result:
+        print(result)
+    else:
+        print("Failed to get a valid response")
+    return result
+
+if __name__ == "__main__":
+    main()
