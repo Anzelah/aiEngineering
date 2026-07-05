@@ -10,6 +10,7 @@ import sys
 from huggingface_hub import InferenceClient, InferenceTimeoutError
 from huggingface_hub.utils import HfHubHTTPError
 import logging
+import json
 
 load_dotenv()
 logger = logging.getLogger() 
@@ -20,6 +21,14 @@ logging.basicConfig(
     level=logging.DEBUG,
     filemode='w'
 )
+
+def valid_json(myjson):
+    try:
+        json.loads(myjson)
+    except json.JSONDecodeError as e:
+        print(f"The object provided is not a valid JSON")
+        return False
+    return True
 
 def parse_input():
     """Parse user input from CLI using Argparse"""
@@ -75,6 +84,8 @@ def call_api():
             max_tokens=150,
             response_format=response_format
         )
+        response = completion.choices[0].message
+
     except InferenceTimeoutError as e:
         print(f"The model is either unavailable or the request timed out: {e}")
 
