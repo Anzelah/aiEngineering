@@ -11,6 +11,7 @@ from huggingface_hub import InferenceClient, InferenceTimeoutError
 from huggingface_hub.utils import HfHubHTTPError
 import logging
 
+load_dotenv()
 logger = logging.getLogger() 
 
 logging.basicConfig(
@@ -39,7 +40,6 @@ def parse_input():
 
 def call_api():
     """Call an llm wrapper with our user_input as the input"""
-    load_dotenv()
     api_key = os.getenv('HF_API_KEY')
     if not api_key:
         sys.exit("Error: Missing API key")
