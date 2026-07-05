@@ -9,7 +9,16 @@ import os
 import sys
 from huggingface_hub import InferenceClient, InferenceTimeoutError
 from huggingface_hub.utils import HfHubHTTPError
+import logging
 
+logger = logging.getLogger() 
+
+logging.basicConfig(
+    filename='app.log',
+    format='{asctime} {levelname}: {message}',
+    level=logging.DEBUG,
+    filemode='w'
+)
 
 def parse_input():
     """Parse user input from CLI using Argparse"""
