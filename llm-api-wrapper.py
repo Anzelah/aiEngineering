@@ -74,9 +74,9 @@ def call_api():
         'value': {
             'properties': {
                 'summary': { 'type': 'string', 'description': 'The summary response from the llm api' },
-                'key points': { 'type': 'string', 'description': 'Key points in numbered format' }
+                'key_points': { 'type': 'string', 'description': 'Key points in numbered format' }
             },
-            'required': [ 'summary', 'key points' ]
+            'required': [ 'summary', 'key_points' ]
         }
     }
 
@@ -89,10 +89,10 @@ def call_api():
         )
         response = completion.choices[0].message
         parsed_res = valid_json(response.content)
-        print(f"This is the parsed Response(to send to user): {parsed_res}")
+        print(f"This is the parsed Response(to send to user) \nSummary - {parsed_res["summary"]} \nKey Points - {parsed_res['key_points']}")
         
         if parsed_res:
-            return f"The summarized answer to your questions is: {parsed_res.summary}. \nKey points include: {parsed_res.key_points}"
+            return f"The answer to your questions is: {parsed_res}"
 
         return None
     except InferenceTimeoutError as e:
