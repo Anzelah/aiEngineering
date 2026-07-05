@@ -27,9 +27,8 @@ logging.basicConfig(
 def valid_json(myjson):
     try:
         return json.loads(myjson)
-
-    except json.JSONDecodeError as e:
-        print(f"The object provided is not a valid JSON")
+    except json.JSONDecodeError:
+        print("Error:Response is not a valid JSON")
         return None
 
 def parse_input():
@@ -104,32 +103,29 @@ def call_api():
 
     except HfHubHTTPError as e:
         # Check if response exists first to avoid failure later
-        if e.response:
-            status_code = e.response.status_code
-        else:
-            status_code = None
+        status_code = e.response.status_code if e.response else None
 
         # Print error according to status codes
         if status_code == 401:
-            print("Unauthorized access. Check your api token permissions")
+            print("Unauthorized Access: Check API Key permissions")
         elif status_code == 403:
-            print("Forbidden. You are not allowed to access this resource")
+            print("Forbidden: You're not allowed to access this resource")
         elif status_code == 404:
-            print("Requested resource doesn't exist. It might've been moved elsewhere or a mispelled link")
+            print("Requested model/resouce not found.")
 
         elif status_code == 429:
             # Retry logic when rate limit reached
             retry_after = e.response.headers.get('Retry-After')
             if retry_after:
                 wait_time = int(retry_after) / 60
-                print(f"Too many requests. Try again after {wait_time} minutes")
+                print(f"Rate limited. Try again in {wait_time} minutes")
             else:
-                print("Too many requests. Try again after a while")
+                print("Rate limited. Try again later")
 
         elif status_code is None:
-            print(f"HTTP error occurred but no response was returned: {e}")
+            print(f"Network/connection error occured: {e}")
         else:
-            print(f"HTTP error {status_code} occured: {e}")
+            print(f"HTTP error {status_code}: {e}")
 
     except Exception as e:
         print(f"An unexpected error occured: {e}")
