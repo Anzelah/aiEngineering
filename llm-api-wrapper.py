@@ -26,8 +26,8 @@ logging.basicConfig(
 
 def valid_json(myjson):
     try:
-        json.loads(myjson)
-        return myjson
+        parsed = json.loads(myjson)
+        return parsed
     except json.JSONDecodeError as e:
         print(f"The object provided is not a valid JSON")
         return None
