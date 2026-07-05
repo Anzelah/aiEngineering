@@ -95,7 +95,7 @@ def call_api():
 
         elif status_code == 429:
             # Retry logic when rate limit reached
-            retry_after = e.response.headers.get('RateLimit')
+            retry_after = e.response.headers.get('Retry-After')
             if retry_after:
                 wait_time = int(retry_after) / 60
                 print(f"Too many requests. Try again after {wait_time} minutes")
