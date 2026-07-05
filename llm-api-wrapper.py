@@ -1,6 +1,8 @@
 """
 Build an LLM API wrapper with command line interface.
-This wrapper is a support simple text analyzer. We'll do the support ticket analyzer later'
+This wrapper is a personal research assistant. It takes 
+questions, calls llm api; and returns structured answers(summary and key points).
+We can later improve it enable asking follow up questions
 """
 
 import argparse
@@ -25,10 +27,10 @@ logging.basicConfig(
 def valid_json(myjson):
     try:
         json.loads(myjson)
+        return myjson
     except json.JSONDecodeError as e:
         print(f"The object provided is not a valid JSON")
-        return False
-    return True
+        return None
 
 def parse_input():
     """Parse user input from CLI using Argparse"""
@@ -61,7 +63,8 @@ def call_api():
     messages = [
         {
             'role': 'system',
-            'content': ('You are an expert assistant')
+            'content': (
+                'You are an expert research assistant. Answer the questions and return structure JSON output with key points and summary')
         }, 
         { 'role': 'user', 'content': user_input }
     ]
@@ -71,9 +74,9 @@ def call_api():
         'value': {
             'properties': {
                 'summary': { 'type': 'string', 'description': 'The summary response from the llm api' },
-                'sentiment': { 'type': 'string', 'description': 'What is the tone of the user input?' }
+                'key points': { 'type': 'string', 'description': 'Key points in numbered format' }
             },
-            'required': [ 'summary', 'sentiment' ]
+            'required': [ 'summary', 'key points' ]
         }
     }
 
@@ -85,7 +88,13 @@ def call_api():
             response_format=response_format
         )
         response = completion.choices[0].message
+        parsed_res = valid_json(response.content)
+        print(f"This is the parsed Response(to send to user): {parsed_res}")
+        
+        if parsed_res:
+            return f"The summarized answer to your questions is: {parsed_res.summary}. \nKey points include: {parsed_res.key_points}"
 
+        return None
     except InferenceTimeoutError as e:
         print(f"The model is either unavailable or the request timed out: {e}")
 
