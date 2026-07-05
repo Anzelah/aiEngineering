@@ -26,8 +26,8 @@ logging.basicConfig(
 
 def valid_json(myjson):
     try:
-        parsed = json.loads(myjson)
-        return parsed
+        return json.loads(myjson)
+
     except json.JSONDecodeError as e:
         print(f"The object provided is not a valid JSON")
         return None
@@ -88,12 +88,16 @@ def call_api():
             response_format=response_format
         )
         response = completion.choices[0].message
-        parsed_res = valid_json(response.content)
-        print(f"This is the parsed Response(to send to user) \nSummary - {parsed_res["summary"]} \nKey Points - {parsed_res['key_points']}")
-        
+        parsed_res = valid_json(response.content) # Should return a structured dict {summary: ..., key_Points: ....}
+    
         if parsed_res:
-            return f"The answer to your questions is: {parsed_res}"
+            summary = parsed_res.get('summary')
+            key_points = parsed_res.get('key_points') # Retrieves key if it exists and None if it doesnt
 
+            if summary is None or key_points is None:
+                return None
+            return f"The answer to your question is: \nSummary: {summary} \nKey Points: {key_points}"
+        
         return None
     except InferenceTimeoutError as e:
         print(f"The model is either unavailable or the request timed out: {e}")
