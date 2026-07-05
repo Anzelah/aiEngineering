@@ -122,11 +122,8 @@ def call_api():
             else:
                 print("Rate limited. Try again later")
 
-        elif status_code is None:
-            print(f"Network/connection error occured: {e}")
         else:
             print(f"HTTP error {status_code}: {e}")
-
     except Exception as e:
         print(f"An unexpected error occured: {e}")
 
