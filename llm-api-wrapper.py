@@ -134,20 +134,3 @@ def call_api():
     except Exception as e:
         print(f"An unexpected error occured: {e}")
 
-
-
-
-
-def json_output():
-    """Enforce JSON response format via the prompt"""
-    pass
-
-
-def errors_and_rate_limit():
-    pass
-
-
-
-def log_results():
-    pass
-
