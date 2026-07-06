@@ -25,7 +25,7 @@ logging.basicConfig(
     filename='app.log',
     format='{asctime} {levelname}: {message}',
     level=logging.DEBUG,
-    filemode='a',
+    filemode='w',
     style='{'
 )
 
