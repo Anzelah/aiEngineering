@@ -25,7 +25,7 @@ logging.basicConfig(
     filename='app.log',
     format='{asctime} {levelname}: {message}',
     level=logging.DEBUG,
-    filemode='w', #change to a after testing
+    filemode='a',
     style='{'
 )
 
@@ -106,7 +106,7 @@ def call_api(user_input):
         {
             'role': 'system',
             'content': (
-                'You are an expert research assistant. You MUST return ONLY valid JSON. No explanations, no extra text.')
+                'You are an expert research assistant. Return structured JSON with summary and key_points')
         }, 
         { 'role': 'user', 'content': user_input }
     ]
