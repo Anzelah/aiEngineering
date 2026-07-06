@@ -73,8 +73,7 @@ def parse_input():
     logger.info("Parsing user input")
 
     parser = argparse.ArgumentParser(
-        description='Send user input to LLM', 
-        suggest_on_error=True
+        description='Send user input to LLM'
     )
 
     parser.add_argument('user_input', type=str, help='Input string')
