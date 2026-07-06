@@ -42,20 +42,20 @@ def valid_json(myjson):
         return json.loads(myjson)
     except json.JSONDecodeError:
         logger.error("Invalid JSON received")
-        raise TypeError
+        raise TypeError("Response is not a valid JSON")
 
 def validate_schema(data):
     """Ensure required keys(summary and keypoints) exist"""
     if not isinstance(data, dict):
         logger.warning("Wrong/unexpected response object")
-        raise TypeError
+        raise TypeError("Response is not a dictionary")
     
     summary = data.get('summary')
     key_points = data.get('key_points') # Retrieves key if it exists and None if it doesnt
     
     if summary is None or key_points is None:
         logger.warning("Missing required fields in response")
-        return KeyError
+        return KeyError("Missing required fields in response")
     
     return data
 
@@ -95,8 +95,8 @@ def call_api(user_input):
     """Call an llm wrapper with our user_input as the input"""
     api_key = os.getenv('HF_API_KEY')
     if not api_key:
-        logger.error("Missing required api key")
-        raise APIRequestError
+        logger.error("Missing api key")
+        raise APIRequestError("Missing required API key")
 
     # Call LLM api. To use chat completions
     client = InferenceClient(api_key=api_key)
@@ -120,8 +120,8 @@ def call_api(user_input):
             'required': [ 'summary', 'key_points' ]
         }
     }
-
     logger.info("Preparing API request")
+
     try:
         completion = client.chat.completions.create(
             model='meta-llama/Meta-Llama-3-8B-Instruct',
@@ -143,18 +143,23 @@ def call_api(user_input):
     
     except InferenceTimeoutError as e:
         logger.error(f"The model is either unavailable or the request timed out: {e}")
+        raise APIRequestError("API request timeout")
 
     except HfHubHTTPError as e:
         # Check if response exists first to avoid failure later
         status_code = e.response.status_code if e.response else None
 
-        # Print error according to status codes
         if status_code == 401:
             logger.error("Unauthorized Access: Check API Key permissions")
+            raise APIRequestError("Unauthorized access")
+
         elif status_code == 403:
-            logger.error("Forbidden: You're not allowed to access this resource")
+            logger.error("Forbidden access")
+            raise APIRequestError("Forbidden access. You're not allowed access to this resource")
+
         elif status_code == 404:
-            logger.error("Requested model/resouce not found.")
+            logger.error("Resource not found.")
+            raise APIRequestError("Requested model/resouce not found.")
 
         elif status_code == 429:
             # Retry logic when rate limit reached
@@ -162,13 +167,20 @@ def call_api(user_input):
             if retry_after:
                 wait_time = int(retry_after) / 60
                 logger.error(f"Rate limited. Try again in {wait_time} minutes")
+                raise APIRequestError(f"Rate limited. Try again in {wait_time} minutes")
+
             else:
                 logger.error("Rate limited. Try again later")
+                raise APIRequestError("Rate limited. Try again later")
 
         else:
             logger.error(f"HTTP error {status_code}: {e}")
+            raise APIRequestError(f"HTTP error {status_code}")
+
+
     except Exception as e:
         logger.exception(f"An unexpected error occured: {e}")
+        raise
 
 
 def main():
