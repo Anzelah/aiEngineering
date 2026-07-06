@@ -17,11 +17,6 @@ from huggingface_hub import InferenceClient, InferenceTimeoutError
 
 load_dotenv()
 
-class SchemaValidationError(Exception):
-    """Raised when required fields are missing"""
-    pass
-
-
 class APIRequestError(Exception):
     """Raised when API call fails"""
     pass
@@ -36,28 +31,33 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__) 
 
+
 def valid_json(myjson):
-    """Validate output is json object"""
+    """Validate output is json object. 
+    Returns a structured dict {summary: ..., key_Points: ....}"""
+
     try:
         return json.loads(myjson)
     except json.JSONDecodeError:
         logger.error("Invalid JSON received")
         raise TypeError("Response is not a valid JSON")
 
+
 def validate_schema(data):
-    """Ensure required keys(summary and keypoints) exist"""
+    """Ensure required keys(summary and keypoints) exist, that response has content"""
     if not isinstance(data, dict):
         logger.warning("Wrong/unexpected response object")
         raise TypeError("Response is not a dictionary")
     
     summary = data.get('summary')
-    key_points = data.get('key_points') # Retrieves key if it exists and None if it doesnt
+    key_points = data.get('key_points') 
     
     if summary is None or key_points is None:
         logger.warning("Missing required fields in response")
-        return KeyError
+        raise KeyError
     
     return data
+
 
 def format_output(data):
     """Format final response to send to user"""
@@ -87,6 +87,9 @@ def parse_input():
         logger.error("Empty input provided")
         parser.error("Input cannot be empty")
     
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+
     logger.info("User input received")
     return args.user_input
 
@@ -132,10 +135,7 @@ def call_api(user_input):
         response_content = completion.choices[0].message.content
         logger.debug(f"Raw LLM Api response: {response_content}")
 
-        # Validate it's json and parse it
-        parsed = valid_json(response_content) # Should return a structured dict {summary: ..., key_Points: ....}
-    
-        # Validate it has content
+        parsed = valid_json(response_content)
         validated = validate_schema(parsed)
 
         #Format output
@@ -209,7 +209,7 @@ def main():
         sys.exit(1)
 
     except Exception as e:
-        logger.exception("An unexpected error occured")
+        logger.exception("An unexpected error occured in main")
         sys.exit(1)
 
 if __name__ == "__main__":
