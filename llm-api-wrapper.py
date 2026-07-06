@@ -55,7 +55,7 @@ def validate_schema(data):
     
     if summary is None or key_points is None:
         logger.warning("Missing required fields in response")
-        return KeyError("Missing required fields in response")
+        return KeyError
     
     return data
 
@@ -154,8 +154,8 @@ def call_api(user_input):
             raise APIRequestError("Unauthorized access")
 
         elif status_code == 403:
-            logger.error("Forbidden access")
-            raise APIRequestError("Forbidden access. You're not allowed access to this resource")
+            logger.error("Forbidden access. You're not allowed access to this resource")
+            raise APIRequestError("Forbidden access")
 
         elif status_code == 404:
             logger.error("Resource not found.")
@@ -175,11 +175,11 @@ def call_api(user_input):
 
         else:
             logger.error(f"HTTP error {status_code}: {e}")
-            raise APIRequestError(f"HTTP error {status_code}")
+            raise APIRequestError(f"http error {status_code}")
 
 
     except Exception as e:
-        logger.exception(f"An unexpected error occured: {e}")
+        logger.exception(f"An unhandled error occured when calling API: {e}")
         raise
 
 
@@ -192,16 +192,24 @@ def main():
         user_input = parse_input()
         result = call_api(user_input)
 
-        if result is None:
-            logger.error("Failed to get valid response")
-            sys.exit(1)
-        
         print(result)
         logger.info("Application completed successfully")
-
         return result
+
+    except TypeError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+    
+    except KeyError:
+        print("Missing required fields in response")
+        sys.exit(1)
+    
+    except APIRequestError as e:
+        print(f"API error: {e}")
+        sys.exit(1)
+
     except Exception as e:
-        logger.exception("Unhandled error in main")
+        logger.exception("An unexpected error occured")
         sys.exit(1)
 
 if __name__ == "__main__":
