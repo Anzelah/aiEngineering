@@ -17,11 +17,20 @@ from huggingface_hub import InferenceClient, InferenceTimeoutError
 
 load_dotenv()
 
+class SchemaValidationError(Exception):
+    """Raised when required fields are missing"""
+    pass
+
+
+class APIRequestError(Exception):
+    """Raised when API call fails"""
+    pass
+
 logging.basicConfig(
     filename='app.log',
     format='{asctime} {levelname}: {message}',
     level=logging.DEBUG,
-    filemode='w',
+    filemode='w', #change to a after testing
     style='{'
 )
 
@@ -33,20 +42,20 @@ def valid_json(myjson):
         return json.loads(myjson)
     except json.JSONDecodeError:
         logger.error("Invalid JSON received")
-        return None
+        raise TypeError
 
 def validate_schema(data):
     """Ensure required keys(summary and keypoints) exist"""
     if not isinstance(data, dict):
         logger.warning("Wrong/unexpected response object")
-        return None
+        raise TypeError
     
     summary = data.get('summary')
     key_points = data.get('key_points') # Retrieves key if it exists and None if it doesnt
     
     if summary is None or key_points is None:
         logger.warning("Missing required fields in response")
-        return None
+        return KeyError
     
     return data
 
@@ -87,7 +96,7 @@ def call_api(user_input):
     api_key = os.getenv('HF_API_KEY')
     if not api_key:
         logger.error("Missing required api key")
-        return None
+        raise APIRequestError
 
     # Call LLM api. To use chat completions
     client = InferenceClient(api_key=api_key)
@@ -125,15 +134,9 @@ def call_api(user_input):
 
         # Validate it's json and parse it
         parsed = valid_json(response_content) # Should return a structured dict {summary: ..., key_Points: ....}
-        if parsed is None:
-            logger.warning("Stopping pipeline due to invalid json")
-            return None
     
         # Validate it has content
         validated = validate_schema(parsed)
-        if validated is None:
-            logger.warning("Stopping pipeline due to schema validation failure")
-            return None
 
         #Format output
         return format_output(validated)
