@@ -63,8 +63,7 @@ def format_output(data):
     """Format final response to send to user"""
 
     return f"""
-    The answer to your question is: \n
-    Summary: {data['summary']} \n
+    Summarized answer: {data['summary']} \n
     Key Points: {data['key_points']}"""
 
 
@@ -107,13 +106,13 @@ def call_api(user_input):
         {
             'role': 'system',
             'content': (
-                'You are an expert research assistant. return structured JSON with summary and key_points')
+                'You are an expert research assistant. You MUST return ONLY valid JSON. No explanations, no extra text.')
         }, 
         { 'role': 'user', 'content': user_input }
     ]
 
     response_format = {
-        'type': 'json',
+        'type': 'json_schema',
         'value': {
             'properties': {
                 'summary': { 'type': 'string', 'description': 'Summary response from the llm api' },
@@ -128,7 +127,7 @@ def call_api(user_input):
         completion = client.chat.completions.create(
             model='meta-llama/Meta-Llama-3-8B-Instruct',
             messages=messages,
-            max_tokens=150,
+            max_tokens=500,
             response_format=response_format
         )
         response_content = completion.choices[0].message.content
@@ -174,7 +173,7 @@ def call_api(user_input):
 
         else:
             logger.error(f"HTTP error {status_code}: {e}")
-            raise APIRequestError(f"http error {status_code}")
+            raise APIRequestError(f"http error {status_code}: {e}")
 
 
     except Exception as e:
