@@ -104,7 +104,7 @@ def call_api(user_input):
 
     messages = [
         {
-            'role': 'system',
+            'role': 'system/developer/instuctions',
             'content': (
                 'You are an expert research assistant. Return structured JSON with summary and key_points')
         }, 
