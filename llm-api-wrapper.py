@@ -125,7 +125,7 @@ def call_api(user_input):
 
     try:
         completion = client.chat.completions.create(
-            model='meta-llama/Meta-Llama-3-8B-Instruct',
+            model='Qwen/Qwen2.5-7B-Instruct',
             messages=messages,
             max_tokens=500,
             response_format=response_format
