@@ -106,7 +106,7 @@ def call_api(user_input):
         {
             'role': 'system',
             'content': (
-                'You are an expert research assistant. Return only valid structured JSON with summarized_answer and key_points. Respond directly without preamble')
+                'You are an expert research assistant. You must first answer the question, then provide a summary of your answer without losing meaning(a detailed summary is fine), then extract key points from your answer. Return only valid structured JSON with summarized_answer and key_points. Respond directly without preamble')
         }, 
         { 'role': 'user', 'content': user_input }
     ]
