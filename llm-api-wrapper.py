@@ -63,7 +63,7 @@ def format_output(data):
     """Format final response to send to user"""
 
     return f"""
-    Summarized answer: {data['summary']} \n
+    Summary: {data['summary']} \n
     Key Points: {data['key_points']}"""
 
 
@@ -104,9 +104,9 @@ def call_api(user_input):
 
     messages = [
         {
-            'role': 'system/developer/instuctions',
+            'role': 'developer',
             'content': (
-                'You are an expert research assistant. Return structured JSON with summary and key_points')
+                'You are an expert research assistant. Return only valid structured JSON with summary and key_points. Respond directly without preamble')
         }, 
         { 'role': 'user', 'content': user_input }
     ]
@@ -131,6 +131,7 @@ def call_api(user_input):
             response_format=response_format
         )
         response_content = completion.choices[0].message.content
+        print(f"LLM Respose is: {response_content}" )
         logger.debug(f"Raw LLM Api response: {response_content}")
 
         parsed = valid_json(response_content)
