@@ -49,7 +49,7 @@ def validate_schema(data):
         logger.warning("Wrong/unexpected response object")
         raise TypeError("Response is not a dictionary")
     
-    summary = data.get('summary')
+    summary = data.get('summarized_answer')
     key_points = data.get('key_points') 
     
     if summary is None or key_points is None:
@@ -63,7 +63,7 @@ def format_output(data):
     """Format final response to send to user"""
 
     return f"""
-    Summary: {data['summary']} \n
+    Summary: {data['summarized_answer']} \n
     Key Points: {data['key_points']}"""
 
 
@@ -104,9 +104,9 @@ def call_api(user_input):
 
     messages = [
         {
-            'role': 'developer',
+            'role': 'system',
             'content': (
-                'You are an expert research assistant. Return only valid structured JSON with summary and key_points. Respond directly without preamble')
+                'You are an expert research assistant. Return only valid structured JSON with summarized_answer and key_points. Respond directly without preamble')
         }, 
         { 'role': 'user', 'content': user_input }
     ]
@@ -118,7 +118,7 @@ def call_api(user_input):
                 'summary': { 'type': 'string', 'description': 'Summary response from the llm api' },
                 'key_points': { 'type': 'string', 'description': 'Key points in numbered format' }
             },
-            'required': [ 'summary', 'key_points' ]
+            'required': [ 'summarized_answer', 'key_points' ]
         }
     }
     logger.info("Preparing API request")
@@ -131,7 +131,7 @@ def call_api(user_input):
             response_format=response_format
         )
         response_content = completion.choices[0].message.content
-        print(f"LLM Respose is: {response_content}" )
+        print(f"LLM Respose is: {response_content}" ) # For Debugging
         logger.debug(f"Raw LLM Api response: {response_content}")
 
         parsed = valid_json(response_content)
