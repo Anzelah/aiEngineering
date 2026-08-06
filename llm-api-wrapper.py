@@ -108,8 +108,8 @@ def call_api(user_input):
             'content': (
                 """You are an intent classifier. Analyze the user texts, then classify them into appropriate lables. 
                 The labels are: billing_issue, refund_request, technical_issue, general_question and other.
-                Before classifying as other, ensure that the text doesn't fit any of the other labels.
                 Examples of text fitting as other: "Hey there", "Just testing", "Hello???", "This is random".
+                If unsure, classify as other rather than guessing
                 Return only valid structured JSON with text_intent without preamble""")
         }, 
         { 'role': 'user', 'content': user_input }
