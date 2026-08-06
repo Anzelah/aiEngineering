@@ -106,7 +106,7 @@ def call_api(user_input):
         {
             'role': 'system',
             'content': (
-                'You are an expert research assistant. You must first answer the question, then provide a summary of your answer without losing meaning(a detailed summary is fine), then extract key points from your answer. Return only valid structured JSON with summarized_answer and key_points. Respond directly without preamble')
+                'You are an intent classifier. Analyze the user texts, then classify them into appropriate lables. The labels are: billing_issue, refund_request, technical_issue, general_question, and other. If unsure how too calssify the text, use other rather than guessing. Return only valid structured JSON with text_intent without prea')
         }, 
         { 'role': 'user', 'content': user_input }
     ]
@@ -115,10 +115,11 @@ def call_api(user_input):
         'type': 'json_schema',
         'value': {
             'properties': {
-                'summary': { 'type': 'string', 'description': 'Summary response from the llm api' },
-                'key_points': { 'type': 'string', 'description': 'Key points in numbered format' }
+                'text_intent': { 'type': 'string', 'description': 'Text intent from the llm api' }
+                #'summary': { 'type': 'string', 'description': 'Summary response from the llm api' },
+                #'key_points': { 'type': 'string', 'description': 'Key points in numbered format' }
             },
-            'required': [ 'summarized_answer', 'key_points' ]
+            'required': [ 'text_intent' ]
         }
     }
     logger.info("Preparing API request")
