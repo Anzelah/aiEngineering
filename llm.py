@@ -116,7 +116,8 @@ def call_api(user_input):
                 "Its not loading properly on my phone"
 
                 billing_issue:
-                Includes questions or complaints about invoices, charges, payments, payment methods, or duplicate transactions.
+                Includes questions or complaints about invoices, charges, payments, payment methods.
+                Includes duplicate charges, unexpected charges, failed payments, or billing errors
                 Excludes requests whose primary action is to request for a refund.
                 Examples:
                 "Why was I charged after my cancellation date?"
@@ -124,32 +125,41 @@ def call_api(user_input):
                 "I think theres something wrong with my payment"
 
                 refund_request:
-                Incudes requests for a refund.
-                Excludes complaints about the service when no refund is requested.
+                Incudes if the user expresses desire to get money back, even if other issues are mentioned.
+                Excludes comments or questions about refunds when no refund is requested.
                 Examples: 
                 "I want a refund because it keeps crashing"
                 "Can I get my money back?"
                 "I regret buying this"
 
                 general_question:
-                Includes clear request for information, assistance, or explanation about features, availability, compatibility, or how the product works.
-                Also includes request for information that lacks context
-                Excludes vague inputs
+                Use this only when the user is clearly asking for information or explanation.
+                Includes clear questions or request for information.
+                Includes requests that arent requesting an action(e.g. refund, fix, complaint resolution)
+                Excludes a user reporting a problem.
+                Excludes greetings or simple acknowledgments
+                Excludes vague inputs.
                 Examples:
+                "I have a question about refunds"
                 "Can you help me?"
                 "How do I reset my password?"
                 "What are your business hours?"
                 
 
                 other:
-                Includes clear requests that does not belong to the categories above or if requested action is unclear.
-                Also includes nonsense or garbage input
+                Use this when the message doesn't clearly fit any of the above categories.
+                Includes vague or unclear intent.
+                Includes compains without a specific request.
+                Includes greetings or short acknowledgments
+                Includesnonsense or meaningless input.
                 Examples:
                 "Hello?"
                 "This is not good"
                 "Something is wrong"
 
-                If user message contains several topics, classify by the main action the user wants performed now and return only one label.
+                If user message contains several topics, classify according to this priority: refund_request > billing_issue > technical_request > general_question > other. 
+                Explicitly use only one label, never two
+                Clssify the hidden intent behind the message when needed.
 
                 Return only valid structured JSON with text_intent without preamble""")
         }, 
