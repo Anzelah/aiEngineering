@@ -106,62 +106,9 @@ def call_api(user_input):
         {
             'role': 'system',
             'content': (
-                """You are an assistant designed to analyze intent from text. Users will paste in a string of text. You'll first analyze the text, then choose exactly one label based on the customer's primary requested action. These are approved labels; 
-                technical_issue:
-                Includes problems using the application, service, account, feature, integration, or device.
-                Excludes questions about the application, service, account, feature, integration, or device.
-                Examples:
-                "I got charged and now nothing is working"
-                "The app keeps crashing when I open it"
-                "Its not loading properly on my phone"
-
-                billing_issue:
-                Includes questions or complaints about invoices, charges, payments, payment methods.
-                Includes duplicate charges, unexpected charges, failed payments, or billing errors
-                Excludes requests whose primary action is to request for a refund.
-                Examples:
-                "Why was I charged after my cancellation date?"
-                "Can you explain why my payment failed?"
-                "I think theres something wrong with my payment"
-
-                refund_request:
-                Incudes if the user expresses desire to get money back, even if other issues are mentioned.
-                Excludes comments or questions about refunds when no refund is requested.
-                Examples: 
-                "I want a refund because it keeps crashing"
-                "Can I get my money back?"
-                "I regret buying this"
-
-                general_question:
-                Use this only when the user is clearly asking for information or explanation.
-                Includes clear questions or request for information.
-                Includes requests that arent requesting an action(e.g. refund, fix, complaint resolution)
-                Excludes a user reporting a problem.
-                Excludes greetings or simple acknowledgments
-                Excludes vague inputs.
-                Examples:
-                "I have a question about refunds"
-                "Can you help me?"
-                "How do I reset my password?"
-                "What are your business hours?"
-                
-
-                other:
-                Use this when the message doesn't clearly fit any of the above categories.
-                Includes vague or unclear intent.
-                Includes compains without a specific request.
-                Includes greetings or short acknowledgments
-                Includesnonsense or meaningless input.
-                Examples:
-                "Hello?"
-                "This is not good"
-                "Something is wrong"
-
-                If user message contains several topics, classify according to this priority: refund_request > billing_issue > technical_request > general_question > other. 
-                Explicitly use only one label, never two
-                Clssify the hidden intent behind the message when needed.
-
-                Return only valid structured JSON with text_intent without preamble""")
+                """You are an assistant designed to summarize the text into under 50 words without losing the meaning and main points. 
+                The summarized text should be 50 words or less, not a word more. Do not try to add your words, just summarize whatever the user texts.
+                Return ONLY valid structured JSON with text_summary without preamble""")
         }, 
         { 'role': 'user', 'content': user_input }
     ]
@@ -170,11 +117,11 @@ def call_api(user_input):
         'type': 'json_schema',
         'value': {
             'properties': {
-                'text_intent': { 'type': 'string', 'description': 'Text intent from the llm api' }
+                'text_summary': { 'type': 'string', 'description': 'Summarized text from the input' }
                 #'summary': { 'type': 'string', 'description': 'Summary response from the llm api' },
                 #'key_points': { 'type': 'string', 'description': 'Key points in numbered format' }
             },
-            'required': [ 'text_intent' ]
+            'required': [ 'text_summary' ]
         }
     }
     logger.info("Preparing API request")
